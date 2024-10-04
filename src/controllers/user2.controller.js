@@ -36,27 +36,8 @@ const resgisterUSer = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User already exists");
   }
 
-  // const avatarLocalPath = req.files?.avatar[0]?.path;
-  // const coverImageocalPath = req.files?.coverImage[0]?.path;
-  let avatarLocalPath;
-  if (
-    req.files &&
-    Array.isArray(req.files.avatar) &&
-    req.files.avatar.lenght > 0
-  ) {
-    avatarLocalPathLocalPath = req.files.avatar[0].path;
-  } else {
-  }
-
-  let coverImageLocalPath;
-  if (
-    req.files &&
-    Array.isArray(req.files.coverImage) &&
-    req.files.coverImage.lenght > 0
-  ) {
-    coverImageLocalPath = req.files.coverImage[0].path;
-  } else {
-  }
+  const avatarLocalPath = req.files?.avatar[0]?.path;
+  const coverImageocalPath = req.files?.coverImage[0]?.path;
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
@@ -64,7 +45,7 @@ const resgisterUSer = asyncHandler(async (req, res) => {
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  const coverImage = await uploadOnCloudinary(coverImageocalPath);
 
   if (!avatar) {
     throw new ApiError(400, "Avatar file is required");
@@ -91,32 +72,4 @@ const resgisterUSer = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, CreatedUser, "USer Registered Sucessfully"));
 });
 
-// login User___
-const loginUser = asyncHandler(async (req, res) => {
-  //  extract data from req.body
-  //  username or email exits or not
-  //  find the user(user exits or not)
-  //  password check
-  //  access and refresh token(genrate these both and have to send it to the user)
-  // send token in cookies(secure cookies)
-
-  const { email, username, password } = req.body;
-  if (!username || !email) {
-    throw new ApiError(400, "username or password is required");
-  }
-
-  const user = await User.findOne({ $or: [{ username }, { email }] });
-  if (!user) {
-    throw ApiError(404, "User doesn't exist");
-  }
-   
-  const isPasswordValid=await user.isPasswordCorrect(password)
-  if (!isPasswordValid) {
-    throw ApiError(401, "password incorrect");
-  }
-    
-
-});
-
 export default resgisterUSer;
-export { loginUser };
